@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>German Verbs Card Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="turn-indicator">Current Turn: <span id="turn">Loading...</span></div>
+    <h1>🇩🇪 German Verbs Battle</h1>
+    
+    <div class="discard-pile">
+        🗑️ Top Discard: <span id="discard">Loading...</span>
+    </div>
+
+    <div class="game-info">
+        <div class="info-box">
+            🃏 Your Cards: <span id="cards-count">0</span>
+        </div>
+        <div class="info-box">
+            🤖 Bot Cards: <span id="bot-count">Loading...</span>
+        </div>
+    </div>
+
+    <div class="card-container" id="player-cards"></div>
+
+    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+</body>
+</html>

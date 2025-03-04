@@ -1,0 +1,125 @@
+:root {
+    --primary: #2A2B2E;
+    --accent: #FF4E50;
+    --background: #F9F9F9;
+    --card-bg: #FFFFFF;
+}
+
+body {
+    font-family: 'Rubik', sans-serif;
+    background: var(--background);
+    color: var(--primary);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+h1 {
+    color: var(--accent);
+    font-size: 2.5rem;
+    margin-bottom: 0.5em;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.game-info {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+}
+
+.info-box {
+    background: var(--card-bg);
+    padding: 1rem 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    min-width: 200px;
+}
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+.card::after {
+    content: attr(data-form);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--accent);
+    color: white;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    text-align: center;
+}
+
+.card:hover::after {
+    transform: translateY(0);
+}
+
+.discard-pile {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--card-bg);
+    padding: 1rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    animation: pulse 2s infinite;
+}
+
+.turn-indicator {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: var(--accent);
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 25px;
+    font-weight: 600;
+}
+
+#bot-count {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-50%) translateY(100%); }
+    to { transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes slideOut {
+    from { transform: translateX(-50%) translateY(0); }
+    to { transform: translateX(-50%) translateY(100%); }
+} 
