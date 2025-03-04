@@ -10,10 +10,19 @@
     <div id="game-setup" class="game-setup">
         <h1>Starke Werben Duel</h1>
         <div class="setup-buttons">
-            <button onclick="createNewGame()">Новая игра</button>
-            <div class="join-game">
-                <input type="text" id="game-id" placeholder="ID игры" maxlength="8">
-                <button onclick="joinGame()">Присоединиться</button>
+            <div class="setup-form">
+                <input type="text" id="player-name" placeholder="Ваше имя" maxlength="20">
+                <div class="setup-actions">
+                    <button onclick="createNewGame()">Создать новую игру</button>
+                    <div class="separator">или</div>
+                    <div class="join-section">
+                        <div class="input-hint">Введите ID игры, чтобы присоединиться:</div>
+                        <div class="join-game">
+                            <input type="text" id="game-id" placeholder="Например: 94wqjh6A" maxlength="8">
+                            <button onclick="joinGame()">Присоединиться</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

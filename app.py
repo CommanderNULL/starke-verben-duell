@@ -17,13 +17,15 @@ class GameState(db.Model):
     bot_cards = db.Column(db.JSON)
     discard_pile = db.Column(db.JSON)
     current_turn = db.Column(db.String(10))
+    player_name = db.Column(db.String(20))
 
     def to_dict(self):
         return {
             "player_cards": self.player_cards,
             "bot_cards_count": len(self.bot_cards),
             "discard_pile": self.discard_pile[-1],
-            "current_turn": self.current_turn
+            "current_turn": self.current_turn,
+            "player_name": self.player_name
         }
 
 def load_verbs():
@@ -118,14 +120,15 @@ class Game:
                 return True
         return False
 
-    def save_state(self, game_id):
+    def save_state(self, game_id, player_name=None):
         game_state = GameState(
             id=game_id,
             deck=self.deck,
             player_cards=self.players["player"],
             bot_cards=self.players["bot"],
             discard_pile=self.discard_pile,
-            current_turn=self.current_turn
+            current_turn=self.current_turn,
+            player_name=player_name
         )
         db.session.merge(game_state)
         db.session.commit()
@@ -134,10 +137,42 @@ games = {}
 
 @app.route("/game/new", methods=["POST"])
 def create_new_game():
+    data = request.json
+    player_name = data.get('player_name')
+    
+    if not player_name:
+        return jsonify({"success": False, "message": "Имя игрока обязательно"})
+    if player_name.lower() == 'bot':
+        return jsonify({"success": False, "message": "Имя 'bot' зарезервировано"})
+    
     game_id = shortuuid.uuid()[:8]
     games[game_id] = Game()
-    games[game_id].save_state(game_id)
-    return jsonify({"game_id": game_id})
+    games[game_id].save_state(game_id, player_name)
+    
+    return jsonify({"success": True, "game_id": game_id})
+
+@app.route("/game/<game_id>/join", methods=["POST"])
+def join_game(game_id):
+    data = request.json
+    player_name = data.get('player_name')
+    
+    if not player_name:
+        return jsonify({"success": False, "message": "Имя игрока обязательно"})
+    if player_name.lower() == 'bot':
+        return jsonify({"success": False, "message": "Имя 'bot' зарезервировано"})
+    
+    game_state = GameState.query.get(game_id)
+    if not game_state:
+        return jsonify({"success": False, "message": "Игра не найдена"})
+    
+    if game_state.player_name and game_state.player_name != player_name:
+        return jsonify({"success": False, "message": "В этой игре уже есть игрок с другим именем"})
+    
+    if not game_state.player_name:
+        game_state.player_name = player_name
+        db.session.commit()
+    
+    return jsonify({"success": True})
 
 @app.route("/game/<game_id>/state", methods=["GET"])
 def get_game_state(game_id):

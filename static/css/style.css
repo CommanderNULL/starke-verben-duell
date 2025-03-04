@@ -262,47 +262,118 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    min-height: 100vh;
     background-color: #f0f0f0;
+    padding: 2rem;
+    width: 100%;
 }
 
 .game-setup h1 {
     margin-bottom: 2rem;
     color: #333;
+    text-align: center;
+    font-size: 2.5rem;
 }
 
 .setup-buttons {
+    width: 100%;
+    max-width: 800px;
+}
+
+.setup-form {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 1rem;
+    box-shadow: var(--shadow);
+}
+
+.setup-form input[type="text"] {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.setup-actions {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    align-items: center;
+    gap: 1.5rem;
 }
 
-.join-game {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.join-game input {
-    padding: 0.5rem;
+.setup-actions button {
+    width: 100%;
+    padding: 0.75rem;
     font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-button {
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    background-color: #4CAF50;
+    background-color: var(--accent);
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 0.5rem;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
-button:hover {
-    background-color: #45a049;
+.setup-actions button:hover {
+    background-color: #0773c5;
+}
+
+.separator {
+    text-align: center;
+    font-size: 1rem;
+    color: #666;
+    position: relative;
+}
+
+.separator::before,
+.separator::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 45%;
+    height: 1px;
+    background-color: #ddd;
+}
+
+.separator::before {
+    left: 0;
+}
+
+.separator::after {
+    right: 0;
+}
+
+.join-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-hint {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.join-game {
+    display: flex;
+    gap: 1rem;
+}
+
+.join-game input {
+    flex: 2;
+    font-size: 1rem;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    height: 48px;
+}
+
+.join-game button {
+    flex: 1;
+    white-space: nowrap;
+    min-width: 160px;
+    height: 48px;
 }
 
 .game-id-display {
@@ -314,5 +385,4 @@ button:hover {
     padding: 0.5rem 1rem;
     border-radius: 4px;
     font-size: 0.9rem;
-} 
 } 

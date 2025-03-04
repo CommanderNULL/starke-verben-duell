@@ -1,16 +1,36 @@
 let currentGameId = null;
+let playerName = null;
 
 async function createNewGame() {
     try {
+        const name = document.getElementById('player-name').value.trim();
+        if (!name) {
+            alert('Пожалуйста, введите ваше имя');
+            return;
+        }
+        if (name.toLowerCase() === 'bot') {
+            alert('Имя "bot" зарезервировано');
+            return;
+        }
+        
         const response = await fetch('/game/new', {
-            method: 'POST'
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ player_name: name })
         });
         const data = await response.json();
-        currentGameId = data.game_id;
-        document.getElementById('current-game-id').textContent = currentGameId;
-        document.getElementById('game-setup').style.display = 'none';
-        document.getElementById('game-table').style.display = 'flex';
-        updateGameState();
+        if (data.success) {
+            currentGameId = data.game_id;
+            playerName = name;
+            document.getElementById('current-game-id').textContent = currentGameId;
+            document.getElementById('game-setup').style.display = 'none';
+            document.getElementById('game-table').style.display = 'flex';
+            updateGameState();
+        } else {
+            alert(data.message);
+        }
     } catch (error) {
         console.error('Error creating new game:', error);
         alert('Ошибка при создании новой игры');
@@ -19,16 +39,45 @@ async function createNewGame() {
 
 async function joinGame() {
     const gameId = document.getElementById('game-id').value.trim();
+    const name = document.getElementById('player-name').value.trim();
+    
     if (!gameId) {
         alert('Пожалуйста, введите ID игры');
         return;
     }
+    if (!name) {
+        alert('Пожалуйста, введите ваше имя');
+        return;
+    }
+    if (name.toLowerCase() === 'bot') {
+        alert('Имя "bot" зарезервировано');
+        return;
+    }
     
-    currentGameId = gameId;
-    document.getElementById('current-game-id').textContent = currentGameId;
-    document.getElementById('game-setup').style.display = 'none';
-    document.getElementById('game-table').style.display = 'flex';
-    updateGameState();
+    try {
+        const response = await fetch(`/game/${gameId}/join`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ player_name: name })
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            currentGameId = gameId;
+            playerName = name;
+            document.getElementById('current-game-id').textContent = currentGameId;
+            document.getElementById('game-setup').style.display = 'none';
+            document.getElementById('game-table').style.display = 'flex';
+            updateGameState();
+        } else {
+            alert(data.message);
+        }
+    } catch (error) {
+        console.error('Error joining game:', error);
+        alert('Ошибка при подключении к игре');
+    }
 }
 
 async function updateGameState() {
