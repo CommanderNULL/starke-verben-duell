@@ -1,0 +1,244 @@
+{
+    "verbs": [
+        {
+            "infinitive": "gehen",
+            "prasens_3": "geht",
+            "prateritum": "ging",
+            "partizip_2": "gegangen"
+        },
+        {
+            "infinitive": "sehen",
+            "prasens_3": "sieht",
+            "prateritum": "sah",
+            "partizip_2": "gesehen"
+        },
+        {
+            "infinitive": "nehmen",
+            "prasens_3": "nimmt",
+            "prateritum": "nahm",
+            "partizip_2": "genommen"
+        },
+        {
+            "infinitive": "kommen",
+            "prasens_3": "kommt",
+            "prateritum": "kam",
+            "partizip_2": "gekommen"
+        },
+        {
+            "infinitive": "essen",
+            "prasens_3": "isst",
+            "prateritum": "aß",
+            "partizip_2": "gegessen"
+        },
+        {
+            "infinitive": "trinken",
+            "prasens_3": "trinkt",
+            "prateritum": "trank",
+            "partizip_2": "getrunken"
+        },
+        {
+            "infinitive": "schlafen",
+            "prasens_3": "schläft",
+            "prateritum": "schlief",
+            "partizip_2": "geschlafen"
+        },
+        {
+            "infinitive": "schreiben",
+            "prasens_3": "schreibt",
+            "prateritum": "schrieb",
+            "partizip_2": "geschrieben"
+        },
+        {
+            "infinitive": "lesen",
+            "prasens_3": "liest",
+            "prateritum": "las",
+            "partizip_2": "gelesen"
+        },
+        {
+            "infinitive": "sprechen",
+            "prasens_3": "spricht",
+            "prateritum": "sprach",
+            "partizip_2": "gesprochen"
+        },
+        {
+            "infinitive": "fahren",
+            "prasens_3": "fährt",
+            "prateritum": "fuhr",
+            "partizip_2": "gefahren"
+        },
+        {
+            "infinitive": "tragen",
+            "prasens_3": "trägt",
+            "prateritum": "trug",
+            "partizip_2": "getragen"
+        },
+        {
+            "infinitive": "finden",
+            "prasens_3": "findet",
+            "prateritum": "fand",
+            "partizip_2": "gefunden"
+        },
+        {
+            "infinitive": "geben",
+            "prasens_3": "gibt",
+            "prateritum": "gab",
+            "partizip_2": "gegeben"
+        },
+        {
+            "infinitive": "helfen",
+            "prasens_3": "hilft",
+            "prateritum": "half",
+            "partizip_2": "geholfen"
+        },
+        {
+            "infinitive": "laufen",
+            "prasens_3": "läuft",
+            "prateritum": "lief",
+            "partizip_2": "gelaufen"
+        },
+        {
+            "infinitive": "rufen",
+            "prasens_3": "ruft",
+            "prateritum": "rief",
+            "partizip_2": "gerufen"
+        },
+        {
+            "infinitive": "singen",
+            "prasens_3": "singt",
+            "prateritum": "sang",
+            "partizip_2": "gesungen"
+        },
+        {
+            "infinitive": "springen",
+            "prasens_3": "springt",
+            "prateritum": "sprang",
+            "partizip_2": "gesprungen"
+        },
+        {
+            "infinitive": "steigen",
+            "prasens_3": "steigt",
+            "prateritum": "stieg",
+            "partizip_2": "gestiegen"
+        },
+        {
+            "infinitive": "sterben",
+            "prasens_3": "stirbt",
+            "prateritum": "starb",
+            "partizip_2": "gestorben"
+        },
+        {
+            "infinitive": "treffen",
+            "prasens_3": "trifft",
+            "prateritum": "traf",
+            "partizip_2": "getroffen"
+        },
+        {
+            "infinitive": "vergessen",
+            "prasens_3": "vergisst",
+            "prateritum": "vergaß",
+            "partizip_2": "vergessen"
+        },
+        {
+            "infinitive": "verlieren",
+            "prasens_3": "verliert",
+            "prateritum": "verlor",
+            "partizip_2": "verloren"
+        },
+        {
+            "infinitive": "waschen",
+            "prasens_3": "wäscht",
+            "prateritum": "wusch",
+            "partizip_2": "gewaschen"
+        },
+        {
+            "infinitive": "ziehen",
+            "prasens_3": "zieht",
+            "prateritum": "zog",
+            "partizip_2": "gezogen"
+        },
+        {
+            "infinitive": "denken",
+            "prasens_3": "denkt",
+            "prateritum": "dachte",
+            "partizip_2": "gedacht"
+        },
+        {
+            "infinitive": "bringen",
+            "prasens_3": "bringt",
+            "prateritum": "brachte",
+            "partizip_2": "gebracht"
+        },
+        {
+            "infinitive": "wissen",
+            "prasens_3": "weiß",
+            "prateritum": "wusste",
+            "partizip_2": "gewusst"
+        },
+        {
+            "infinitive": "rennen",
+            "prasens_3": "rennt",
+            "prateritum": "rannte",
+            "partizip_2": "gerannt"
+        },
+        {
+            "infinitive": "stehen",
+            "prasens_3": "steht",
+            "prateritum": "stand",
+            "partizip_2": "gestanden"
+        },
+        {
+            "infinitive": "sitzen",
+            "prasens_3": "sitzt",
+            "prateritum": "saß",
+            "partizip_2": "gesessen"
+        },
+        {
+            "infinitive": "liegen",
+            "prasens_3": "liegt",
+            "prateritum": "lag",
+            "partizip_2": "gelegen"
+        },
+        {
+            "infinitive": "bitten",
+            "prasens_3": "bittet",
+            "prateritum": "bat",
+            "partizip_2": "gebeten"
+        },
+        {
+            "infinitive": "beginnen",
+            "prasens_3": "beginnt",
+            "prateritum": "begann",
+            "partizip_2": "begonnen"
+        },
+        {
+            "infinitive": "gewinnen",
+            "prasens_3": "gewinnt",
+            "prateritum": "gewann",
+            "partizip_2": "gewonnen"
+        },
+        {
+            "infinitive": "scheinen",
+            "prasens_3": "scheint",
+            "prateritum": "schien",
+            "partizip_2": "geschienen"
+        },
+        {
+            "infinitive": "schneiden",
+            "prasens_3": "schneidet",
+            "prateritum": "schnitt",
+            "partizip_2": "geschnitten"
+        },
+        {
+            "infinitive": "werfen",
+            "prasens_3": "wirft",
+            "prateritum": "warf",
+            "partizip_2": "geworfen"
+        },
+        {
+            "infinitive": "bieten",
+            "prasens_3": "bietet",
+            "prateritum": "bot",
+            "partizip_2": "geboten"
+        }
+    ]
+} 

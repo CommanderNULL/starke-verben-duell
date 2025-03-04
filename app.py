@@ -1,59 +1,30 @@
 from flask import Flask, request, jsonify, render_template
 import random
+import json
+import os
 
 app = Flask(__name__)
+
+def load_verbs():
+    with open(os.path.join(app.static_folder, 'data', 'verbs.json'), 'r', encoding='utf-8') as f:
+        data = json.load(f)
+        return data['verbs']
 
 @app.route("/")
 def index():
     return render_template('index.html')
 
-# Список сильных глаголов в немецком с их формами
-STRONG_VERBS = [
-    ("gehen", "ging", "gegangen"),
-    ("sehen", "sah", "gesehen"),
-    ("nehmen", "nahm", "genommen"),
-    ("kommen", "kam", "gekommen"),
-    ("essen", "aß", "gegessen"),
-    ("trinken", "trank", "getrunken"),
-    ("schlafen", "schlief", "geschlafen"),
-    ("schreiben", "schrieb", "geschrieben"),
-    ("lesen", "las", "gelesen"),
-    ("sprechen", "sprach", "gesprochen"),
-    ("fahren", "fuhr", "gefahren"),
-    ("tragen", "trug", "getragen"),
-    ("finden", "fand", "gefunden"),
-    ("geben", "gab", "gegeben"),
-    ("helfen", "half", "geholfen"),
-    ("laufen", "lief", "gelaufen"),
-    ("rufen", "rief", "gerufen"),
-    ("singen", "sang", "gesungen"),
-    ("springen", "sprang", "gesprungen"),
-    ("steigen", "stieg", "gestiegen"),
-    ("sterben", "starb", "gestorben"),
-    ("treffen", "traf", "getroffen"),
-    ("vergessen", "vergaß", "vergessen"),
-    ("verlieren", "verlor", "verloren"),
-    ("waschen", "wusch", "gewaschen"),
-    ("ziehen", "zog", "gezogen"),
-    ("denken", "dachte", "gedacht"),
-    ("bringen", "brachte", "gebracht"),
-    ("wissen", "wusste", "gewusst"),
-    ("rennen", "rannte", "gerannt"),
-    ("stehen", "stand", "gestanden"),
-    ("sitzen", "saß", "gesessen"),
-    ("liegen", "lag", "gelegen"),
-    ("bitten", "bat", "gebeten"),
-    ("beginnen", "begann", "begonnen"),
-    ("gewinnen", "gewann", "gewonnen"),
-    ("scheinen", "schien", "geschienen"),
-    ("schneiden", "schnitt", "geschnitten"),
-    ("werfen", "warf", "geworfen"),
-    ("bieten", "bot", "geboten")
-]
-
 class Game:
     def __init__(self):
-        self.deck = [(form, verb, index) for verb, *forms in STRONG_VERBS for index, form in enumerate(forms)]
+        self.verbs = load_verbs()
+        self.deck = []
+        for verb in self.verbs:
+            self.deck.extend([
+                (verb['infinitive'], verb['infinitive'], 0),
+                (verb['prasens_3'], verb['infinitive'], 1),
+                (verb['prateritum'], verb['infinitive'], 2),
+                (verb['partizip_2'], verb['infinitive'], 3)
+            ])
         random.shuffle(self.deck)
         self.players = {"player": [], "bot": []}
         self.discard_pile = []
