@@ -3,7 +3,7 @@ async function fetchGameState() {
     const data = await response.json();
     
     document.getElementById('turn').textContent = data.current_turn;
-    document.getElementById('discard').textContent = `${data.discard_pile[0]} (${data.discard_pile[1]})`;
+    document.getElementById('discard').textContent = data.discard_pile[0];
     document.getElementById('bot-count').textContent = data.bot_cards_count;
     document.getElementById('cards-count').textContent = data.player_cards.length;
     
@@ -18,7 +18,6 @@ function renderPlayerCards(cards) {
         const cardElement = document.createElement('div');
         cardElement.className = 'card';
         cardElement.textContent = card[0];
-        cardElement.dataset.form = card[1];
         cardElement.onclick = () => playCard(card);
         
         container.appendChild(cardElement);
