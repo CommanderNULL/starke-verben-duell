@@ -7,7 +7,18 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="game-table">
+    <div id="game-setup" class="game-setup">
+        <h1>Starke Werben Duel</h1>
+        <div class="setup-buttons">
+            <button onclick="createNewGame()">Новая игра</button>
+            <div class="join-game">
+                <input type="text" id="game-id" placeholder="ID игры" maxlength="8">
+                <button onclick="joinGame()">Присоединиться</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="game-table" class="game-table" style="display: none;">
         <!-- Область бота -->
         <div class="player-area bot-area">
             <div class="bot-hand"></div>
@@ -17,6 +28,7 @@
         <div class="play-area">
             <div class="discard-pile"></div>
             <div class="turn-indicator" id="turn">Ход: 1</div>
+            <div class="game-id-display">ID игры: <span id="current-game-id"></span></div>
         </div>
 
         <!-- Область игрока -->

@@ -1,164 +1,104 @@
-let lastState = null;
+let currentGameId = null;
 
-async function fetchGameState() {
-    const response = await fetch('/game/state');
-    const data = await response.json();
-    
-    document.getElementById('turn').textContent = data.current_turn;
-    
-    if (lastState) {
-        updateGameState(lastState, data);
-    } else {
-        renderInitialState(data);
-    }
-    
-    lastState = data;
-}
-
-function renderInitialState(data) {
-    // Рендерим карты игрока
-    renderPlayerCards(data.player_cards);
-    
-    // Рендерим верхнюю карту
-    renderTopCard(data.discard_pile);
-    
-    // Рендерим карты бота
-    renderBotHand(data.bot_cards_count);
-}
-
-function updateGameState(oldState, newState) {
-    // Обновляем карты игрока
-    updatePlayerCards(oldState.player_cards, newState.player_cards);
-    
-    // Обновляем верхнюю карту
-    updateTopCard(oldState.discard_pile, newState.discard_pile);
-    
-    // Обновляем карты бота
-    updateBotHand(oldState.bot_cards_count, newState.bot_cards_count);
-}
-
-function renderPlayerCards(cards) {
-    const container = document.getElementById('player-cards');
-    container.innerHTML = '';
-    
-    cards.forEach(card => {
-        const cardElement = createCardElement(card);
-        cardElement.onclick = () => playCard(card);
-        container.appendChild(cardElement);
-    });
-}
-
-function updatePlayerCards(oldCards, newCards) {
-    const container = document.getElementById('player-cards');
-    
-    // Удаляем карты, которых нет в новом состоянии
-    Array.from(container.children).forEach(card => {
-        const cardData = [card.textContent, card.dataset.verb, card.dataset.form];
-        if (!newCards.some(newCard => 
-            newCard[0] === cardData[0] && 
-            newCard[1] === cardData[1] && 
-            newCard[2] === cardData[2]
-        )) {
-            card.remove();
-        }
-    });
-    
-    // Добавляем новые карты
-    newCards.forEach(newCard => {
-        if (!Array.from(container.children).some(card => 
-            card.textContent === newCard[0] && 
-            card.dataset.verb === newCard[1] && 
-            card.dataset.form === newCard[2]
-        )) {
-            const cardElement = createCardElement(newCard);
-            cardElement.onclick = () => playCard(newCard);
-            container.appendChild(cardElement);
-        }
-    });
-}
-
-function createCardElement(card) {
-    const cardElement = document.createElement('div');
-    cardElement.className = 'card';
-    cardElement.textContent = card[0];
-    cardElement.dataset.verb = card[1];
-    cardElement.dataset.form = card[2];
-    return cardElement;
-}
-
-function renderTopCard(card) {
-    const discardPile = document.querySelector('.discard-pile');
-    discardPile.innerHTML = '';
-    
-    const cardElement = createCardElement(card);
-    cardElement.style.setProperty('--rotation', `${Math.random() * 4 - 2}deg`);
-    discardPile.appendChild(cardElement);
-}
-
-function updateTopCard(oldCard, newCard) {
-    if (oldCard[0] !== newCard[0] || oldCard[1] !== newCard[1] || oldCard[2] !== newCard[2]) {
-        const discardPile = document.querySelector('.discard-pile');
-        discardPile.innerHTML = ''; // Очищаем отбой перед добавлением новой карты
-        
-        const cardElement = createCardElement(newCard);
-        cardElement.style.setProperty('--rotation', `${Math.random() * 4 - 2}deg`);
-        discardPile.appendChild(cardElement);
-        
-        // Анимация появления карты
-        cardElement.style.animation = 'playCard 0.5s ease forwards';
+async function createNewGame() {
+    try {
+        const response = await fetch('/game/new', {
+            method: 'POST'
+        });
+        const data = await response.json();
+        currentGameId = data.game_id;
+        document.getElementById('current-game-id').textContent = currentGameId;
+        document.getElementById('game-setup').style.display = 'none';
+        document.getElementById('game-table').style.display = 'flex';
+        updateGameState();
+    } catch (error) {
+        console.error('Error creating new game:', error);
+        alert('Ошибка при создании новой игры');
     }
 }
 
-function renderBotHand(count) {
-    const botHand = document.querySelector('.bot-hand');
-    botHand.innerHTML = '';
-    
-    // Создаем карты бота внахлест
-    for (let i = 0; i < count; i++) {
-        const cardElement = document.createElement('div');
-        cardElement.className = 'card';
-        cardElement.style.background = 'var(--card-back)';
-        botHand.appendChild(cardElement);
+async function joinGame() {
+    const gameId = document.getElementById('game-id').value.trim();
+    if (!gameId) {
+        alert('Пожалуйста, введите ID игры');
+        return;
     }
+    
+    currentGameId = gameId;
+    document.getElementById('current-game-id').textContent = currentGameId;
+    document.getElementById('game-setup').style.display = 'none';
+    document.getElementById('game-table').style.display = 'flex';
+    updateGameState();
 }
 
-function updateBotHand(oldCount, newCount) {
-    if (oldCount !== newCount) {
-        renderBotHand(newCount);
+async function updateGameState() {
+    try {
+        const response = await fetch(`/game/${currentGameId}/state`);
+        const state = await response.json();
+        updateUI(state);
+    } catch (error) {
+        console.error('Error updating game state:', error);
     }
 }
 
 async function playCard(card) {
     try {
-        const response = await fetch('/game/play', {
+        const response = await fetch(`/game/${currentGameId}/play`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({ card })
         });
-        
-        const result = await response.json();
-        if(result.success) {
-            await fetchGameState();
+        const data = await response.json();
+        if (data.success) {
+            updateGameState();
+        } else {
+            alert(data.message);
         }
-        showNotification(result.message + (result.bot_message ? `\n${result.bot_message}` : ''));
     } catch (error) {
-        showNotification('Error connecting to server');
+        console.error('Error playing card:', error);
+        alert('Ошибка при ходе');
     }
 }
 
-function showNotification(message) {
-    const notification = document.createElement('div');
-    notification.className = 'notification';
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
+function updateUI(state) {
+    // Обновляем карты игрока
+    const playerHand = document.getElementById('player-cards');
+    playerHand.innerHTML = '';
+    state.player_cards.forEach(card => {
+        const cardElement = document.createElement('div');
+        cardElement.className = 'card';
+        cardElement.textContent = card[0];
+        cardElement.onclick = () => playCard(card);
+        playerHand.appendChild(cardElement);
+    });
+
+    // Обновляем карты бота
+    const botHand = document.querySelector('.bot-hand');
+    botHand.innerHTML = '';
+    for (let i = 0; i < state.bot_cards_count; i++) {
+        const cardElement = document.createElement('div');
+        cardElement.className = 'card card-back';
+        botHand.appendChild(cardElement);
+    }
+
+    // Обновляем верхнюю карту в сбросе
+    const discardPile = document.querySelector('.discard-pile');
+    discardPile.innerHTML = '';
+    const topCard = document.createElement('div');
+    topCard.className = 'card';
+    topCard.textContent = state.discard_pile[0];
+    discardPile.appendChild(topCard);
+
+    // Обновляем индикатор хода
+    const turnIndicator = document.getElementById('turn');
+    turnIndicator.textContent = `Ход: ${state.current_turn === 'player' ? 'Игрок' : 'Бот'}`;
 }
 
-// Initial fetch
-fetchGameState();
-setInterval(fetchGameState, 5000); 
+// Автоматическое обновление состояния игры каждые 2 секунды
+setInterval(() => {
+    if (currentGameId) {
+        updateGameState();
+    }
+}, 2000); 
