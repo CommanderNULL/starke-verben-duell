@@ -37,3 +37,6 @@ Thumbs.db
 
 # Docker
 .docker/ 
+
+# Database
+game.db
