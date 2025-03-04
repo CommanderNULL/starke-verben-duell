@@ -1,106 +1,259 @@
 :root {
-    --primary: #2A2B2E;
-    --accent: #FF4E50;
-    --background: #F9F9F9;
-    --card-bg: #FFFFFF;
+    --primary: #2d3436;
+    --accent: #0984e3;
+    --background: #f5f6fa;
+    --card-bg: #ffffff;
+    --card-back: linear-gradient(135deg, #74b9ff, #0984e3);
+    --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    --border: 1px solid rgba(0, 0, 0, 0.1);
+    --glow: 0 0 20px rgba(9, 132, 227, 0.3);
+    --card-width: 100px;
+    --card-height: 140px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-    font-family: 'Rubik', sans-serif;
+    font-family: 'Arial', sans-serif;
     background: var(--background);
     color: var(--primary);
     min-height: 100vh;
-    padding: 20px;
-}
-
-h1 {
-    color: var(--accent);
-    font-size: 2.5rem;
-    margin-bottom: 0.5em;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-}
-
-.game-info {
     display: flex;
     justify-content: center;
-    gap: 2rem;
-    margin: 2rem 0;
-    flex-wrap: wrap;
-}
-
-.info-box {
-    background: var(--card-bg);
-    padding: 1rem 2rem;
-    border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    min-width: 200px;
-}
-
-.card-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 1.5rem;
-    max-width: 1200px;
-    margin: 2rem auto;
+    align-items: center;
     padding: 1rem;
 }
 
-.card {
-    background: var(--card-bg);
-    border-radius: 15px;
-    padding: 1.5rem;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
+.game-table {
+    width: 100%;
+    max-width: 900px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 2rem;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow);
 }
 
-.card:hover {
-    transform: translateY(-5px) scale(1.03);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+.player-area {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-height: 200px;
+}
+
+.player-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    border: var(--border);
+}
+
+.player-name {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--card-bg);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.card-count {
+    background: var(--accent);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.9rem;
+    box-shadow: var(--glow);
+}
+
+.play-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    position: relative;
+    min-height: 160px;
 }
 
 .discard-pile {
-    position: fixed;
-    top: 20px;
-    right: 20px;
+    width: var(--card-width);
+    height: var(--card-height);
+    position: relative;
+}
+
+.discard-pile::before {
+    content: 'Отбой';
+    position: absolute;
+    top: -1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--card-bg);
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.card {
+    width: var(--card-width);
+    height: var(--card-height);
     background: var(--card-bg);
-    padding: 1rem;
-    border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    animation: pulse 2s infinite;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+    border: var(--border);
+    color: var(--primary);
+    user-select: none;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--glow);
+}
+
+.player-hand {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    min-height: 150px;
+    flex-wrap: wrap;
+    max-width: 100%;
+    align-items: center;
+}
+
+.bot-hand {
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem;
+    min-height: 150px;
+    position: relative;
+    transform-origin: center bottom;
+    transform: scale(0.8);
+}
+
+.bot-hand .card {
+    position: absolute;
+    cursor: default;
+    transform-origin: center bottom;
+    transition: transform 0.3s ease;
+    background: var(--card-back);
+}
+
+.bot-hand .card:hover {
+    transform: none;
+    box-shadow: var(--shadow);
+}
+
+.bot-hand .card:nth-child(1) { transform: translateX(-50px) rotate(-3deg); }
+.bot-hand .card:nth-child(2) { transform: translateX(-35px) rotate(-2deg); }
+.bot-hand .card:nth-child(3) { transform: translateX(-20px) rotate(-1deg); }
+.bot-hand .card:nth-child(4) { transform: translateX(-5px) rotate(0deg); }
+.bot-hand .card:nth-child(5) { transform: translateX(10px) rotate(1deg); }
+.bot-hand .card:nth-child(6) { transform: translateX(25px) rotate(2deg); }
+.bot-hand .card:nth-child(7) { transform: translateX(40px) rotate(3deg); }
+.bot-hand .card:nth-child(8) { transform: translateX(55px) rotate(4deg); }
+.bot-hand .card:nth-child(9) { transform: translateX(70px) rotate(5deg); }
+.bot-hand .card:nth-child(10) { transform: translateX(85px) rotate(6deg); }
+
+.bot-hand::after {
+    content: 'Карты бота';
+    position: absolute;
+    top: -1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--card-bg);
+    font-size: 0.8rem;
+    opacity: 0.8;
+    z-index: 1;
 }
 
 .turn-indicator {
-    position: fixed;
-    top: 20px;
-    left: 20px;
+    position: absolute;
+    top: 50%;
+    left: 2rem;
+    transform: translateY(-50%);
     background: var(--accent);
     color: white;
-    padding: 0.5rem 1.5rem;
-    border-radius: 25px;
-    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    font-weight: bold;
+    box-shadow: var(--glow);
+    font-size: 1rem;
 }
 
-#bot-count {
-    color: var(--accent);
-    font-weight: 600;
-    font-size: 1.2rem;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+.notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 1rem;
+    box-shadow: var(--glow);
+    animation: slideIn 0.3s ease;
+    z-index: 1000;
+    font-weight: bold;
+    font-size: 0.9rem;
 }
 
 @keyframes slideIn {
-    from { transform: translateX(-50%) translateY(100%); }
-    to { transform: translateX(-50%) translateY(0); }
+    from {
+        transform: translate(-50%, 100%);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
 }
 
 @keyframes slideOut {
-    from { transform: translateX(-50%) translateY(0); }
-    to { transform: translateX(-50%) translateY(100%); }
+    from {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+    to {
+        transform: translate(-50%, 100%);
+        opacity: 0;
+    }
+}
+
+@keyframes playCard {
+    from {
+        transform: scale(0.8) rotate(var(--rotation));
+        opacity: 0;
+    }
+    to {
+        transform: scale(1) rotate(var(--rotation));
+        opacity: 1;
+    }
+}
+
+@keyframes dealCard {
+    from {
+        transform: translateY(-100vh) rotate(var(--rotation));
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) rotate(var(--rotation));
+        opacity: 1;
+    }
+} 
 } 
