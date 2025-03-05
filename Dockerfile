@@ -13,4 +13,7 @@ ENV FLASK_DEBUG=1
 
 EXPOSE 8085
 
+# Запускаем тесты перед стартом приложения
+RUN pytest test_game.py -v
+
 CMD ["python", "app.py"] 

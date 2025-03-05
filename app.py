@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 import random
 import json
 import os
@@ -9,6 +10,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///game.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 class GameState(db.Model):
     id = db.Column(db.String(10), primary_key=True)
@@ -18,6 +20,7 @@ class GameState(db.Model):
     discard_pile = db.Column(db.JSON)
     current_turn = db.Column(db.String(10))
     player_name = db.Column(db.String(20))
+    no_valid_moves_count = db.Column(db.Integer)
 
     def to_dict(self):
         return {
@@ -50,6 +53,7 @@ class Game:
                 }
                 self.discard_pile = game_state.discard_pile
                 self.current_turn = game_state.current_turn
+                self.no_valid_moves_count = game_state.no_valid_moves_count if hasattr(game_state, 'no_valid_moves_count') else 0
                 return
         
         self.deck = []
@@ -64,6 +68,7 @@ class Game:
         self.players = {"player": [], "bot": []}
         self.discard_pile = []
         self.current_turn = "player"
+        self.no_valid_moves_count = 0
         self.deal_cards()
 
     def deal_cards(self):
@@ -83,6 +88,7 @@ class Game:
             self.players[player].remove(card)
             self.discard_pile.append(card)
             self.current_turn = "bot" if player == "player" else "player"
+            self.no_valid_moves_count = 0
             return True, "Card played successfully."
         return False, "Invalid move!"
 
@@ -95,15 +101,25 @@ class Game:
                 self.players["bot"].remove(card)
                 self.discard_pile.append(card)
                 self.current_turn = "player"
+                self.no_valid_moves_count = 0
                 return True, "Bot played a card."
 
         # if we are here this means that bot has no valid move
         self.pull_one_more_card("bot")
+        self.no_valid_moves_count += 1
+        if self.no_valid_moves_count >= 3:
+            self.replace_top_card()
+            self.no_valid_moves_count = 0
+            return True, "После трех ходов без возможности сходить, верхняя карточка заменена"
         return True, "Bot has no valid move. He takes the card and passes the move"
 
     def pull_one_more_card(self, player_name):
         self.players[player_name].append(self.deck.pop())
         self.current_turn = "bot" if player_name == "player" else "player"
+
+    def replace_top_card(self):
+        if len(self.deck) > 0:
+            self.discard_pile.append(self.deck.pop())
 
     def get_state(self):
         return {
@@ -128,7 +144,8 @@ class Game:
             bot_cards=self.players["bot"],
             discard_pile=self.discard_pile,
             current_turn=self.current_turn,
-            player_name=player_name
+            player_name=player_name,
+            no_valid_moves_count=self.no_valid_moves_count
         )
         db.session.merge(game_state)
         db.session.commit()

@@ -5,11 +5,11 @@ async function createNewGame() {
     try {
         const name = document.getElementById('player-name').value.trim();
         if (!name) {
-            alert('Пожалуйста, введите ваше имя');
+            notifications.show('Пожалуйста, введите ваше имя');
             return;
         }
         if (name.toLowerCase() === 'bot') {
-            alert('Имя "bot" зарезервировано');
+            notifications.show('Имя "bot" зарезервировано');
             return;
         }
         
@@ -29,11 +29,11 @@ async function createNewGame() {
             document.getElementById('game-table').style.display = 'flex';
             updateGameState();
         } else {
-            alert(data.message);
+            notifications.show(data.message);
         }
     } catch (error) {
         console.error('Error creating new game:', error);
-        alert('Ошибка при создании новой игры');
+        notifications.show('Ошибка при создании новой игры');
     }
 }
 
@@ -42,15 +42,15 @@ async function joinGame() {
     const name = document.getElementById('player-name').value.trim();
     
     if (!gameId) {
-        alert('Пожалуйста, введите ID игры');
+        notifications.show('Пожалуйста, введите ID игры');
         return;
     }
     if (!name) {
-        alert('Пожалуйста, введите ваше имя');
+        notifications.show('Пожалуйста, введите ваше имя');
         return;
     }
     if (name.toLowerCase() === 'bot') {
-        alert('Имя "bot" зарезервировано');
+        notifications.show('Имя "bot" зарезервировано');
         return;
     }
     
@@ -72,11 +72,11 @@ async function joinGame() {
             document.getElementById('game-table').style.display = 'flex';
             updateGameState();
         } else {
-            alert(data.message);
+            notifications.show(data.message);
         }
     } catch (error) {
         console.error('Error joining game:', error);
-        alert('Ошибка при подключении к игре');
+        notifications.show('Ошибка при подключении к игре');
     }
 }
 
@@ -103,11 +103,11 @@ async function playCard(card) {
         if (data.success) {
             updateGameState();
         } else {
-            alert(data.message);
+            notifications.show(data.message);
         }
     } catch (error) {
         console.error('Error playing card:', error);
-        alert('Ошибка при ходе');
+        notifications.show('Ошибка при ходе');
     }
 }
 

@@ -1,3 +1,6 @@
 flask==3.0.2
 flask-sqlalchemy
-shortuuid 
+flask-migrate
+shortuuid
+pytest==8.0.0
+pytest-cov==4.1.0 
