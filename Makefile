@@ -2,30 +2,34 @@
 
 # Сборка и запуск
 build:
-	docker-compose build
+	docker compose build
 
 up:
-	docker-compose up
+	docker compose up
 
 down:
-	docker-compose down
+	docker compose down
 
 # Перезапуск контейнера
 restart:
-	docker-compose down
-	docker-compose up --build -d
+	docker compose down
+	docker compose up --build -d
 
 # Запуск тестов
 test:
-	docker-compose exec app pytest test_game.py -v
+	docker compose up -d
+	docker compose exec game pytest test_game.py -v
+	docker compose down
 
 # Запуск тестов с отчетом о покрытии
 test-cov:
-	docker-compose exec app pytest test_game.py --cov=app --cov-report=term-missing -v
+	docker compose up -d
+	docker compose exec game pytest test_game.py --cov=app --cov-report=term-missing -v
+	docker compose down
 
 # Очистка
 clean:
-	docker-compose down -v
+	docker compose down -v
 	find . -type d -name "__pycache__" -exec rm -r {} +
 	find . -type f -name "*.pyc" -delete
 	find . -type f -name "*.pyo" -delete
