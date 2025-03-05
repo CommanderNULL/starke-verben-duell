@@ -119,6 +119,13 @@ function updateUI(state) {
         const cardElement = document.createElement('div');
         cardElement.className = 'card';
         cardElement.textContent = card[0];
+        
+        // Добавляем перевод
+        const translationElement = document.createElement('div');
+        translationElement.className = 'translation';
+        translationElement.textContent = card[3];
+        cardElement.appendChild(translationElement);
+        
         cardElement.onclick = () => playCard(card);
         playerHand.appendChild(cardElement);
     });
@@ -138,6 +145,13 @@ function updateUI(state) {
     const topCard = document.createElement('div');
     topCard.className = 'card';
     topCard.textContent = state.discard_pile[0];
+    
+    // Добавляем перевод для верхней карты
+    const topTranslationElement = document.createElement('div');
+    topTranslationElement.className = 'translation';
+    topTranslationElement.textContent = state.discard_pile[3];
+    topCard.appendChild(topTranslationElement);
+    
     discardPile.appendChild(topCard);
 
     // Обновляем индикатор хода

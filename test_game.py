@@ -15,7 +15,7 @@ class TestGame(unittest.TestCase):
         """Проверка валидного хода"""
         # Создаем карточку, которая совпадает с верхней на столе
         top_card = self.game.discard_pile[-1]
-        matching_card = (top_card[0], top_card[1], top_card[2])
+        matching_card = (top_card[0], top_card[1], top_card[2], top_card[3])
         
         # Добавляем карточку в руку игрока
         self.game.players["player"].append(matching_card)
@@ -30,7 +30,7 @@ class TestGame(unittest.TestCase):
         top_card = self.game.discard_pile[-1]
         different_verb = "kommen" if top_card[1] != "kommen" else "gehen"
         # Создаем карточку с другим глаголом и другим индексом
-        invalid_card = ("Präsens", different_verb, (top_card[2] + 1) % 4)
+        invalid_card = ("Präsens", different_verb, (top_card[2] + 1) % 4, "идти")
         
         # Добавляем карточку в руку игрока
         self.game.players["player"].append(invalid_card)

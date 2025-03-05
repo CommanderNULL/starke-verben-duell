@@ -126,6 +126,29 @@ body {
     box-shadow: var(--glow);
 }
 
+.card .translation {
+    position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    opacity: 0;
+    transition: all 0.2s ease;
+    pointer-events: none;
+    z-index: 100;
+    box-shadow: var(--shadow);
+}
+
+.card:hover .translation {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-5px);
+}
+
 .player-hand {
     display: flex;
     justify-content: center;

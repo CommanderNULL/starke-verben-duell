@@ -4,241 +4,281 @@
             "infinitive": "gehen",
             "prasens_3": "geht",
             "prateritum": "ging",
-            "partizip_2": "gegangen"
+            "partizip_2": "gegangen",
+            "translation": "идти"
         },
         {
             "infinitive": "sehen",
             "prasens_3": "sieht",
             "prateritum": "sah",
-            "partizip_2": "gesehen"
+            "partizip_2": "gesehen",
+            "translation": "видеть"
         },
         {
             "infinitive": "nehmen",
             "prasens_3": "nimmt",
             "prateritum": "nahm",
-            "partizip_2": "genommen"
+            "partizip_2": "genommen",
+            "translation": "брать"
         },
         {
             "infinitive": "kommen",
             "prasens_3": "kommt",
             "prateritum": "kam",
-            "partizip_2": "gekommen"
+            "partizip_2": "gekommen",
+            "translation": "приходить"
         },
         {
             "infinitive": "essen",
             "prasens_3": "isst",
             "prateritum": "aß",
-            "partizip_2": "gegessen"
+            "partizip_2": "gegessen",
+            "translation": "есть"
         },
         {
             "infinitive": "trinken",
             "prasens_3": "trinkt",
             "prateritum": "trank",
-            "partizip_2": "getrunken"
+            "partizip_2": "getrunken",
+            "translation": "пить"
         },
         {
             "infinitive": "schlafen",
             "prasens_3": "schläft",
             "prateritum": "schlief",
-            "partizip_2": "geschlafen"
+            "partizip_2": "geschlafen",
+            "translation": "спать"
         },
         {
             "infinitive": "schreiben",
             "prasens_3": "schreibt",
             "prateritum": "schrieb",
-            "partizip_2": "geschrieben"
+            "partizip_2": "geschrieben",
+            "translation": "писать"
         },
         {
             "infinitive": "lesen",
             "prasens_3": "liest",
             "prateritum": "las",
-            "partizip_2": "gelesen"
+            "partizip_2": "gelesen",
+            "translation": "читать"
         },
         {
             "infinitive": "sprechen",
             "prasens_3": "spricht",
             "prateritum": "sprach",
-            "partizip_2": "gesprochen"
+            "partizip_2": "gesprochen",
+            "translation": "говорить"
         },
         {
             "infinitive": "fahren",
             "prasens_3": "fährt",
             "prateritum": "fuhr",
-            "partizip_2": "gefahren"
+            "partizip_2": "gefahren",
+            "translation": "ехать"
         },
         {
             "infinitive": "tragen",
             "prasens_3": "trägt",
             "prateritum": "trug",
-            "partizip_2": "getragen"
+            "partizip_2": "getragen",
+            "translation": "нести"
         },
         {
             "infinitive": "finden",
             "prasens_3": "findet",
             "prateritum": "fand",
-            "partizip_2": "gefunden"
+            "partizip_2": "gefunden",
+            "translation": "находить"
         },
         {
             "infinitive": "geben",
             "prasens_3": "gibt",
             "prateritum": "gab",
-            "partizip_2": "gegeben"
+            "partizip_2": "gegeben",
+            "translation": "давать"
         },
         {
             "infinitive": "helfen",
             "prasens_3": "hilft",
             "prateritum": "half",
-            "partizip_2": "geholfen"
+            "partizip_2": "geholfen",
+            "translation": "помогать"
         },
         {
             "infinitive": "laufen",
             "prasens_3": "läuft",
             "prateritum": "lief",
-            "partizip_2": "gelaufen"
+            "partizip_2": "gelaufen",
+            "translation": "бежать"
         },
         {
             "infinitive": "rufen",
             "prasens_3": "ruft",
             "prateritum": "rief",
-            "partizip_2": "gerufen"
+            "partizip_2": "gerufen",
+            "translation": "звать"
         },
         {
             "infinitive": "singen",
             "prasens_3": "singt",
             "prateritum": "sang",
-            "partizip_2": "gesungen"
+            "partizip_2": "gesungen",
+            "translation": "петь"
         },
         {
             "infinitive": "springen",
             "prasens_3": "springt",
             "prateritum": "sprang",
-            "partizip_2": "gesprungen"
+            "partizip_2": "gesprungen",
+            "translation": "прыгать"
         },
         {
             "infinitive": "steigen",
             "prasens_3": "steigt",
             "prateritum": "stieg",
-            "partizip_2": "gestiegen"
+            "partizip_2": "gestiegen",
+            "translation": "подниматься"
         },
         {
             "infinitive": "sterben",
             "prasens_3": "stirbt",
             "prateritum": "starb",
-            "partizip_2": "gestorben"
+            "partizip_2": "gestorben",
+            "translation": "умирать"
         },
         {
             "infinitive": "treffen",
             "prasens_3": "trifft",
             "prateritum": "traf",
-            "partizip_2": "getroffen"
+            "partizip_2": "getroffen",
+            "translation": "встречать"
         },
         {
             "infinitive": "vergessen",
             "prasens_3": "vergisst",
             "prateritum": "vergaß",
-            "partizip_2": "vergessen"
+            "partizip_2": "vergessen",
+            "translation": "забывать"
         },
         {
             "infinitive": "verlieren",
             "prasens_3": "verliert",
             "prateritum": "verlor",
-            "partizip_2": "verloren"
+            "partizip_2": "verloren",
+            "translation": "терять"
         },
         {
             "infinitive": "waschen",
             "prasens_3": "wäscht",
             "prateritum": "wusch",
-            "partizip_2": "gewaschen"
+            "partizip_2": "gewaschen",
+            "translation": "мыть"
         },
         {
             "infinitive": "ziehen",
             "prasens_3": "zieht",
             "prateritum": "zog",
-            "partizip_2": "gezogen"
+            "partizip_2": "gezogen",
+            "translation": "тянуть"
         },
         {
             "infinitive": "denken",
             "prasens_3": "denkt",
             "prateritum": "dachte",
-            "partizip_2": "gedacht"
+            "partizip_2": "gedacht",
+            "translation": "думать"
         },
         {
             "infinitive": "bringen",
             "prasens_3": "bringt",
             "prateritum": "brachte",
-            "partizip_2": "gebracht"
+            "partizip_2": "gebracht",
+            "translation": "приносить"
         },
         {
             "infinitive": "wissen",
             "prasens_3": "weiß",
             "prateritum": "wusste",
-            "partizip_2": "gewusst"
+            "partizip_2": "gewusst",
+            "translation": "знать"
         },
         {
             "infinitive": "rennen",
             "prasens_3": "rennt",
             "prateritum": "rannte",
-            "partizip_2": "gerannt"
+            "partizip_2": "gerannt",
+            "translation": "бежать"
         },
         {
             "infinitive": "stehen",
             "prasens_3": "steht",
             "prateritum": "stand",
-            "partizip_2": "gestanden"
+            "partizip_2": "gestanden",
+            "translation": "стоять"
         },
         {
             "infinitive": "sitzen",
             "prasens_3": "sitzt",
             "prateritum": "saß",
-            "partizip_2": "gesessen"
+            "partizip_2": "gesessen",
+            "translation": "сидеть"
         },
         {
             "infinitive": "liegen",
             "prasens_3": "liegt",
             "prateritum": "lag",
-            "partizip_2": "gelegen"
+            "partizip_2": "gelegen",
+            "translation": "лежать"
         },
         {
             "infinitive": "bitten",
             "prasens_3": "bittet",
             "prateritum": "bat",
-            "partizip_2": "gebeten"
+            "partizip_2": "gebeten",
+            "translation": "просить"
         },
         {
             "infinitive": "beginnen",
             "prasens_3": "beginnt",
             "prateritum": "begann",
-            "partizip_2": "begonnen"
+            "partizip_2": "begonnen",
+            "translation": "начинать"
         },
         {
             "infinitive": "gewinnen",
             "prasens_3": "gewinnt",
             "prateritum": "gewann",
-            "partizip_2": "gewonnen"
+            "partizip_2": "gewonnen",
+            "translation": "выигрывать"
         },
         {
             "infinitive": "scheinen",
             "prasens_3": "scheint",
             "prateritum": "schien",
-            "partizip_2": "geschienen"
+            "partizip_2": "geschienen",
+            "translation": "светить"
         },
         {
             "infinitive": "schneiden",
             "prasens_3": "schneidet",
             "prateritum": "schnitt",
-            "partizip_2": "geschnitten"
+            "partizip_2": "geschnitten",
+            "translation": "резать"
         },
         {
             "infinitive": "werfen",
             "prasens_3": "wirft",
             "prateritum": "warf",
-            "partizip_2": "geworfen"
+            "partizip_2": "geworfen",
+            "translation": "бросать"
         },
         {
             "infinitive": "bieten",
             "prasens_3": "bietet",
             "prateritum": "bot",
-            "partizip_2": "geboten"
+            "partizip_2": "geboten",
+            "translation": "предлагать"
         }
     ]
 } 

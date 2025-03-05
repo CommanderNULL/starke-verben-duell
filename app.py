@@ -59,10 +59,10 @@ class Game:
         self.deck = []
         for verb in self.verbs:
             self.deck.extend([
-                (verb['infinitive'], verb['infinitive'], 0),
-                (verb['prasens_3'], verb['infinitive'], 1),
-                (verb['prateritum'], verb['infinitive'], 2),
-                (verb['partizip_2'], verb['infinitive'], 3)
+                (verb['infinitive'], verb['infinitive'], 0, verb['translation']),
+                (verb['prasens_3'], verb['infinitive'], 1, verb['translation']),
+                (verb['prateritum'], verb['infinitive'], 2, verb['translation']),
+                (verb['partizip_2'], verb['infinitive'], 3, verb['translation'])
             ])
         random.shuffle(self.deck)
         self.players = {"player": [], "bot": []}
@@ -82,8 +82,8 @@ class Game:
             return False, "Not your turn!"
         if card not in self.players[player]:
             return False, "You don't have that card!"
-        top_form, top_verb, top_index = self.discard_pile[-1]
-        card_form, card_verb, card_index = card
+        top_form, top_verb, top_index, _ = self.discard_pile[-1]
+        card_form, card_verb, card_index, _ = card
         if card_index == top_index or card_verb == top_verb:
             self.players[player].remove(card)
             self.discard_pile.append(card)
@@ -95,7 +95,7 @@ class Game:
     def bot_move(self):
         if self.current_turn != "bot":
             return False, "Not bot's turn!"
-        top_form, top_verb, top_index = self.discard_pile[-1]
+        top_form, top_verb, top_index, _ = self.discard_pile[-1]
         for card in self.players["bot"]:
             if card[2] == top_index or card[1] == top_verb:
                 self.players["bot"].remove(card)
@@ -130,7 +130,7 @@ class Game:
         }
 
     def check_if_playable(self):
-        top_form, top_verb, top_index = self.discard_pile[-1]
+        top_form, top_verb, top_index, _ = self.discard_pile[-1]
         for card in self.players["player"]:
             if card[2] == top_index or card[1] == top_verb:
                 return True
