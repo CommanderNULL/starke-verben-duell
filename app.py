@@ -16,19 +16,25 @@ class GameState(db.Model):
     id = db.Column(db.String(10), primary_key=True)
     deck = db.Column(db.JSON)
     player_cards = db.Column(db.JSON)
-    bot_cards = db.Column(db.JSON)
+    opponent_cards = db.Column(db.JSON)
     discard_pile = db.Column(db.JSON)
     current_turn = db.Column(db.String(10))
     player_name = db.Column(db.String(20))
+    opponent_name = db.Column(db.String(20))
+    game_type = db.Column(db.String(10))  # 'bot' или 'multiplayer'
     no_valid_moves_count = db.Column(db.Integer)
+    game_status = db.Column(db.String(20))  # 'waiting', 'active', 'finished'
 
     def to_dict(self):
         return {
             "player_cards": self.player_cards,
-            "bot_cards_count": len(self.bot_cards),
+            "opponent_cards_count": len(self.opponent_cards),
             "discard_pile": self.discard_pile[-1],
             "current_turn": self.current_turn,
-            "player_name": self.player_name
+            "player_name": self.player_name,
+            "opponent_name": self.opponent_name,
+            "game_type": self.game_type,
+            "game_status": self.game_status
         }
 
 def load_verbs():
@@ -49,10 +55,11 @@ class Game:
                 self.deck = game_state.deck
                 self.players = {
                     "player": game_state.player_cards,
-                    "bot": game_state.bot_cards
+                    "opponent": game_state.opponent_cards
                 }
                 self.discard_pile = game_state.discard_pile
                 self.current_turn = game_state.current_turn
+                self.game_type = game_state.game_type
                 self.no_valid_moves_count = game_state.no_valid_moves_count if hasattr(game_state, 'no_valid_moves_count') else 0
                 return
         
@@ -65,57 +72,78 @@ class Game:
                 (verb['partizip_2'], verb['infinitive'], 3, verb['translation'])
             ])
         random.shuffle(self.deck)
-        self.players = {"player": [], "bot": []}
+        self.players = {"player": [], "opponent": []}
         self.discard_pile = []
-        self.current_turn = "player"
+        self.current_turn = "player"  # Всегда начинает игрок
+        self.game_type = "bot"  # по умолчанию игра с ботом
         self.no_valid_moves_count = 0
         self.deal_cards()
 
     def deal_cards(self):
         for _ in range(10):
             self.players["player"].append(self.deck.pop())
-            self.players["bot"].append(self.deck.pop())
+            self.players["opponent"].append(self.deck.pop())
         self.discard_pile.append(self.deck.pop())
+        
+        # При игре с ботом проверяем, может ли игрок сделать ход с начальными картами
+        if self.game_type == "bot":
+            if not self.check_if_playable():
+                # Если игрок не может сделать ход, берем карту и меняем ход на бота
+                self.pull_one_more_card("player")
+                # Предотвращаем немедленный ход бота, просто меняя ход обратно на игрока
+                self.current_turn = "player"
 
     def play_card(self, player, card):
         if player != self.current_turn:
-            return False, "Not your turn!"
+            return False, "Не ваш ход!"
         if card not in self.players[player]:
-            return False, "You don't have that card!"
+            return False, "У вас нет такой карты!"
         top_form, top_verb, top_index, _ = self.discard_pile[-1]
         card_form, card_verb, card_index, _ = card
         if card_index == top_index or card_verb == top_verb:
             self.players[player].remove(card)
             self.discard_pile.append(card)
-            self.current_turn = "bot" if player == "player" else "player"
+            self.current_turn = "opponent" if player == "player" else "player"
             self.no_valid_moves_count = 0
-            return True, "Card played successfully."
-        return False, "Invalid move!"
+            
+            # Если игра с ботом, сразу делаем ход ботом
+            if self.game_type == "bot" and self.current_turn == "opponent":
+                print("Делаем ход ботом")  # Отладка
+                return self.bot_move()
+            
+            return True, "Карта успешно сыграна."
+        return False, "Недопустимый ход!"
 
     def bot_move(self):
-        if self.current_turn != "bot":
-            return False, "Not bot's turn!"
+        if self.game_type != "bot" or self.current_turn != "opponent":
+            return False, "Не ход бота!"
+        
+        print("Ход бота, проверяем карты")  # Отладка
+        
         top_form, top_verb, top_index, _ = self.discard_pile[-1]
-        for card in self.players["bot"]:
+        for card in self.players["opponent"]:
             if card[2] == top_index or card[1] == top_verb:
-                self.players["bot"].remove(card)
+                self.players["opponent"].remove(card)
                 self.discard_pile.append(card)
                 self.current_turn = "player"
                 self.no_valid_moves_count = 0
-                return True, "Bot played a card."
+                print("Бот сделал ход, передаем ход игроку")  # Отладка
+                return True, "Бот сделал ход."
 
-        # if we are here this means that bot has no valid move
-        self.pull_one_more_card("bot")
+        # если у бота нет возможности сходить
+        print("У бота нет возможности сходить, берет карту")  # Отладка
+        self.pull_one_more_card("opponent")
         self.no_valid_moves_count += 1
         if self.no_valid_moves_count >= 3:
             self.replace_top_card()
             self.no_valid_moves_count = 0
             return True, "После трех ходов без возможности сходить, верхняя карточка заменена"
-        return True, "Bot has no valid move. He takes the card and passes the move"
+        return True, "У бота нет возможности сходить. Он берет карту и пропускает ход"
 
     def pull_one_more_card(self, player_name):
-        self.players[player_name].append(self.deck.pop())
-        self.current_turn = "bot" if player_name == "player" else "player"
+        if len(self.deck) > 0:
+            self.players[player_name].append(self.deck.pop())
+        self.current_turn = "opponent" if player_name == "player" else "player"
 
     def replace_top_card(self):
         if len(self.deck) > 0:
@@ -124,9 +152,11 @@ class Game:
     def get_state(self):
         return {
             "player_cards": self.players["player"],
-            "bot_cards_count": len(self.players["bot"]),
+            "opponent_cards_count": len(self.players["opponent"]),
             "discard_pile": self.discard_pile[-1],
-            "current_turn": self.current_turn
+            "current_turn": self.current_turn,
+            "game_type": self.game_type,
+            "is_my_turn": self.current_turn == "player"  # Для игры с ботом игрок всегда "player"
         }
 
     def check_if_playable(self):
@@ -136,18 +166,48 @@ class Game:
                 return True
         return False
 
-    def save_state(self, game_id, player_name=None):
-        game_state = GameState(
-            id=game_id,
-            deck=self.deck,
-            player_cards=self.players["player"],
-            bot_cards=self.players["bot"],
-            discard_pile=self.discard_pile,
-            current_turn=self.current_turn,
-            player_name=player_name,
-            no_valid_moves_count=self.no_valid_moves_count
-        )
-        db.session.merge(game_state)
+    def save_state(self, game_id, player_name=None, opponent_name=None, game_type="bot"):
+        # Получаем текущее состояние из базы данных, если оно существует
+        existing_state = GameState.query.get(game_id)
+        
+        if existing_state:
+            # Обновляем существующую запись
+            existing_state.deck = self.deck
+            existing_state.player_cards = self.players["player"]
+            existing_state.opponent_cards = self.players["opponent"]
+            existing_state.discard_pile = self.discard_pile
+            existing_state.current_turn = self.current_turn
+            existing_state.no_valid_moves_count = self.no_valid_moves_count
+            
+            # Обновляем имена и тип игры только если они предоставлены
+            if player_name:
+                existing_state.player_name = player_name
+            if opponent_name:
+                existing_state.opponent_name = opponent_name
+                existing_state.game_status = 'active'
+            elif game_type == 'multiplayer' and not existing_state.opponent_name:
+                existing_state.game_status = 'waiting'
+            
+            if game_type:
+                existing_state.game_type = game_type
+        else:
+            # Создаем новую запись
+            game_state = GameState(
+                id=game_id,
+                deck=self.deck,
+                player_cards=self.players["player"],
+                opponent_cards=self.players["opponent"],
+                discard_pile=self.discard_pile,
+                current_turn=self.current_turn,
+                player_name=player_name,
+                opponent_name=opponent_name,
+                game_type=game_type,
+                no_valid_moves_count=self.no_valid_moves_count,
+                game_status='waiting' if game_type == 'multiplayer' and not opponent_name else 'active'
+            )
+            db.session.add(game_state)
+        
+        # Сохраняем изменения
         db.session.commit()
 
 games = {}
@@ -156,6 +216,7 @@ games = {}
 def create_new_game():
     data = request.json
     player_name = data.get('player_name')
+    game_type = data.get('game_type', 'bot')  # по умолчанию игра с ботом
     
     if not player_name:
         return jsonify({"success": False, "message": "Имя игрока обязательно"})
@@ -164,9 +225,19 @@ def create_new_game():
     
     game_id = shortuuid.uuid()[:8]
     games[game_id] = Game()
-    games[game_id].save_state(game_id, player_name)
+    games[game_id].game_type = game_type
     
-    return jsonify({"success": True, "game_id": game_id})
+    # Явно гарантируем, что в игре с ботом первый ход за игроком
+    if game_type == 'bot':
+        games[game_id].current_turn = "player"
+    
+    games[game_id].save_state(game_id, player_name, game_type=game_type)
+    
+    return jsonify({
+        "success": True, 
+        "game_id": game_id,
+        "game_type": game_type
+    })
 
 @app.route("/game/<game_id>/join", methods=["POST"])
 def join_game(game_id):
@@ -182,41 +253,261 @@ def join_game(game_id):
     if not game_state:
         return jsonify({"success": False, "message": "Игра не найдена"})
     
-    if game_state.player_name and game_state.player_name != player_name:
-        return jsonify({"success": False, "message": "В этой игре уже есть игрок с другим именем"})
+    if game_state.game_type != 'multiplayer':
+        return jsonify({"success": False, "message": "Это не мультиплеерная игра"})
     
-    if not game_state.player_name:
-        game_state.player_name = player_name
+    if game_state.opponent_name and game_state.opponent_name != player_name:
+        return jsonify({"success": False, "message": "К этой игре уже присоединился другой игрок"})
+    
+    if game_state.player_name == player_name:
+        return jsonify({"success": False, "message": "Вы не можете играть против себя"})
+    
+    if not game_state.opponent_name:
+        game_state.opponent_name = player_name
+        game_state.game_status = 'active'
         db.session.commit()
     
-    return jsonify({"success": True})
+    return jsonify({
+        "success": True,
+        "game_type": "multiplayer",
+        "opponent_name": game_state.player_name
+    })
 
 @app.route("/game/<game_id>/state", methods=["GET"])
 def get_game_state(game_id):
+    player_name = request.args.get('player_name')
+    if not player_name:
+        return jsonify({"success": False, "message": "Не указано имя игрока"})
+
     if game_id not in games:
         games[game_id] = Game(game_id)
     
     game = games[game_id]
-    if not game.check_if_playable():
-        game.pull_one_more_card("player")
-        bot_success, bot_message = game.bot_move()
-        game.save_state(game_id)
-
+    game_state = GameState.query.get(game_id)
+    
+    # Отладка
+    print(f"Получен запрос состояния игры: {game_id}, игрок: {player_name}, текущий ход: {game.current_turn}")
+    
+    # Для мультиплеерной игры
+    if game_state and game_state.game_type == 'multiplayer':
+        if game_state.game_status == 'waiting':
+            return jsonify({
+                "status": "waiting",
+                "message": "Ожидание подключения второго игрока..."
+            })
+        
+        # Определяем, является ли текущий игрок первым или вторым игроком
+        is_first_player = game_state.player_name == player_name
+        
+        # Формируем состояние игры с точки зрения текущего игрока
+        # Используем глубокие копии для предотвращения случайных изменений
+        player_cards = game_state.player_cards.copy() if is_first_player else game_state.opponent_cards.copy()
+        opponent_cards = game_state.opponent_cards.copy() if is_first_player else game_state.player_cards.copy()
+        discard_pile = game_state.discard_pile.copy() if game_state.discard_pile else []
+        
+        # Проверка на случай, если сброс пуст
+        top_card = discard_pile[-1] if discard_pile else None
+        
+        state = {
+            "player_cards": player_cards,
+            "opponent_cards_count": len(opponent_cards),
+            "discard_pile": top_card,
+            "current_turn": game_state.current_turn,
+            "game_type": game_state.game_type,
+            "game_status": game_state.game_status,
+            "player_name": player_name,
+            "opponent_name": game_state.opponent_name if is_first_player else game_state.player_name,
+            "is_my_turn": (game_state.current_turn == "player" and is_first_player) or 
+                        (game_state.current_turn == "opponent" and not is_first_player)
+        }
+        
+        # Обновляем состояние игры в памяти
+        game.players = {
+            "player": game_state.player_cards.copy(),
+            "opponent": game_state.opponent_cards.copy()
+        }
+        game.discard_pile = discard_pile
+        game.current_turn = game_state.current_turn
+        game.no_valid_moves_count = game_state.no_valid_moves_count
+        
+        return jsonify(state)
+    
+    # Для игры с ботом
+    if game.game_type == 'bot':
+        # Отладка
+        print(f"Игра с ботом, ход: {game.current_turn}")
+        
+        # Проверяем возможность хода игрока
+        if game.current_turn == "player" and not game.check_if_playable():
+            print("У игрока нет возможности сделать ход, берет карту")
+            game.pull_one_more_card("player")
+            bot_success, bot_message = game.bot_move()
+            game.save_state(game_id)
+        
+        state = game.get_state()
+        print(f"Возвращаемое состояние: {state}")
+        return jsonify(state)
+        
     return jsonify(game.get_state())
 
 @app.route("/game/<game_id>/play", methods=["POST"])
 def play_card(game_id):
     if game_id not in games:
-        return jsonify({"success": False, "message": "Game not found!"})
+        return jsonify({"success": False, "message": "Игра не найдена!"})
+    
+    data = request.json
+    player_name = data.get('player_name')
+    if not player_name:
+        return jsonify({"success": False, "message": "Не указано имя игрока"})
     
     game = games[game_id]
-    data = request.json
+    game_state = GameState.query.get(game_id)
+    
+    # Определяем, является ли текущий игрок первым или вторым игроком
+    is_first_player = game_state.player_name == player_name
+    current_role = "player" if is_first_player else "opponent"
+    
+    # Проверяем, чей сейчас ход
+    if game_state.current_turn != current_role:
+        return jsonify({"success": False, "message": "Сейчас не ваш ход!"})
+    
+    # Для мультиплеерной игры
+    if game_state.game_type == 'multiplayer':
+        # Получаем карты текущего игрока
+        player_cards = game_state.player_cards.copy() if is_first_player else game_state.opponent_cards.copy()
+        received_card = data["card"]
+        
+        # Преобразуем полученную карту в тот же формат, который используется в БД
+        received_card = [str(received_card[0]), str(received_card[1]), int(received_card[2]), str(received_card[3])]
+        
+        # Ищем соответствующую карту в руке игрока
+        card_found = False
+        card_index = -1
+        
+        for i, card in enumerate(player_cards):
+            # Убедимся, что типы данных в карте совпадают
+            card_check = [str(card[0]), str(card[1]), int(card[2]), str(card[3])]
+            
+            if (card_check[0] == received_card[0] and 
+                card_check[1] == received_card[1] and 
+                card_check[2] == received_card[2] and 
+                card_check[3] == received_card[3]):
+                card_found = True
+                card_index = i
+                break
+        
+        if not card_found:
+            return jsonify({"success": False, "message": "У вас нет такой карты!"})
+        
+        # Проверяем, можно ли сыграть эту карту
+        top_card = game_state.discard_pile[-1]
+        top_card_check = [str(top_card[0]), str(top_card[1]), int(top_card[2]), str(top_card[3])]
+        
+        if received_card[2] == top_card_check[2] or received_card[1] == top_card_check[1]:
+            # Удаляем карту из руки игрока
+            played_card = player_cards.pop(card_index)
+            
+            # Обновляем состояние игры в памяти
+            if is_first_player:
+                game.players["player"] = player_cards
+            else:
+                game.players["opponent"] = player_cards
+            
+            # Добавляем карту в сброс
+            game.discard_pile.append(played_card)
+            
+            # Меняем ход
+            game.current_turn = "opponent" if game.current_turn == "player" else "player"
+            game.no_valid_moves_count = 0
+            
+            # Сохраняем все изменения в базу данных
+            game.save_state(game_id, game_state.player_name, game_state.opponent_name, game_state.game_type)
+            
+            return jsonify({"success": True, "message": "Карта успешно сыграна"})
+        return jsonify({"success": False, "message": "Недопустимый ход!"})
+    
+    # Для игры с ботом
     success, message = game.play_card("player", tuple(data["card"]))
     if success:
         bot_success, bot_message = game.bot_move()
         game.save_state(game_id)
         return jsonify({"success": success, "message": message, "bot_message": bot_message})
     return jsonify({"success": success, "message": message})
+
+@app.route("/game/<game_id>/draw", methods=["POST"])
+def draw_card(game_id):
+    """Маршрут для случая, когда игрок не может сделать ход и хочет взять карту"""
+    if game_id not in games:
+        return jsonify({"success": False, "message": "Игра не найдена!"})
+    
+    data = request.json
+    player_name = data.get('player_name')
+    if not player_name:
+        return jsonify({"success": False, "message": "Не указано имя игрока"})
+    
+    game = games[game_id]
+    game_state = GameState.query.get(game_id)
+    
+    # Определяем, является ли текущий игрок первым или вторым игроком
+    is_first_player = game_state.player_name == player_name
+    current_role = "player" if is_first_player else "opponent"
+    
+    # Проверяем, чей сейчас ход
+    if game_state.current_turn != current_role:
+        return jsonify({"success": False, "message": "Сейчас не ваш ход!"})
+    
+    # Проверяем, действительно ли у игрока нет возможности сделать ход
+    player_cards = game_state.player_cards.copy() if is_first_player else game_state.opponent_cards.copy()
+    top_card = game_state.discard_pile[-1]
+    
+    # Проверяем все карты игрока
+    has_valid_move = False
+    for card in player_cards:
+        if card[2] == top_card[2] or card[1] == top_card[1]:
+            has_valid_move = True
+            break
+    
+    if has_valid_move:
+        return jsonify({"success": False, "message": "У вас есть возможность сделать ход!"})
+    
+    # Берем карту из колоды
+    if len(game.deck) > 0:
+        new_card = game.deck.pop()
+        if is_first_player:
+            game.players["player"].append(new_card)
+            game_state.player_cards.append(new_card)
+        else:
+            game.players["opponent"].append(new_card)
+            game_state.opponent_cards.append(new_card)
+    
+    # Увеличиваем счетчик безвыходных ситуаций
+    game.no_valid_moves_count += 1
+    game_state.no_valid_moves_count += 1
+    
+    # Если было 3 хода без возможности сходить, меняем верхнюю карту
+    if game.no_valid_moves_count >= 3:
+        if len(game.deck) > 0:
+            game.discard_pile.append(game.deck.pop())
+            game_state.discard_pile.append(game.discard_pile[-1])
+        game.no_valid_moves_count = 0
+        game_state.no_valid_moves_count = 0
+        message = "После трех ходов без возможности сходить, верхняя карточка заменена"
+    else:
+        # Передаем ход другому игроку
+        game.current_turn = "opponent" if current_role == "player" else "player"
+        game_state.current_turn = game.current_turn
+        message = "Карта взята, ход переходит к другому игроку"
+    
+    # Сохраняем изменения
+    db.session.commit()
+    
+    # Для игры с ботом
+    if game.game_type == "bot" and game.current_turn == "opponent":
+        bot_success, bot_message = game.bot_move()
+        game.save_state(game_id)
+        return jsonify({"success": True, "message": message, "bot_message": bot_message})
+    
+    return jsonify({"success": True, "message": message})
 
 with app.app_context():
     db.create_all()
