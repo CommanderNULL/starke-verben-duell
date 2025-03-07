@@ -236,6 +236,50 @@ body {
     font-size: 0.9rem;
 }
 
+.notification.confirmation {
+    bottom: 50%;
+    transform: translate(-50%, 50%);
+    width: 300px;
+    max-width: 90%;
+    text-align: center;
+    padding: 1.5rem;
+    background: white;
+    color: var(--primary);
+    border: var(--border);
+    box-shadow: var(--shadow);
+}
+
+.notification-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.notification-buttons button {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.notification-buttons button:first-child {
+    background: var(--accent);
+    color: white;
+}
+
+.notification-buttons button:last-child {
+    background: #dfe6e9;
+    color: var(--primary);
+}
+
+.notification-buttons button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
 @keyframes slideIn {
     from {
         transform: translate(-50%, 100%);

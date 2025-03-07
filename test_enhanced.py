@@ -140,6 +140,110 @@ class TestGameEnhanced(unittest.TestCase):
         # Здесь можно было бы проверить логику определения победителя,
         # если такая логика есть в Game
     
+    def test_player_win_condition(self):
+        """Проверка условия победы игрока - когда игрок использует последнюю карту"""
+        # Подготавливаем состояние игры: у игрока остается только одна карта
+        top_card = self.game.discard_pile[-1]
+        top_verb = top_card[1]
+        top_index = top_card[2]
+        
+        # Создаем карту, которую можно сыграть
+        winning_card = ("Präsens", top_verb, top_index, "тест")
+        
+        # Очищаем карты игрока и добавляем только победную карту
+        self.game.players["player"] = [winning_card]
+        self.game.current_turn = "player"
+        
+        # Проверяем, что у игрока одна карта
+        self.assertEqual(len(self.game.players["player"]), 1)
+        
+        # Игрок делает ход последней картой
+        success, message = self.game.play_card("player", winning_card)
+        
+        # Проверяем успешность хода
+        self.assertTrue(success)
+        
+        # Проверяем, что карт у игрока больше нет
+        self.assertEqual(len(self.game.players["player"]), 0)
+        
+        # Проверяем, что игра завершена (current_turn == "over")
+        self.assertEqual(self.game.current_turn, "over")
+        
+        # Проверяем сообщение о победе
+        self.assertTrue("выиграл" in message)
+        
+        # Проверяем, что состояние get_state() правильно отражает победителя
+        state = self.game.get_state()
+        self.assertTrue(state["game_over"])
+        self.assertEqual(state["winner"], "player")
+    
+    def test_bot_win_condition(self):
+        """Проверка условия победы бота - когда бот использует последнюю карту"""
+        # Подготавливаем состояние игры
+        top_card = self.game.discard_pile[-1]
+        top_verb = top_card[1]
+        top_index = top_card[2]
+        
+        # Создаем карту, которую может сыграть бот
+        winning_card = ("Präsens", top_verb, top_index, "тест")
+        
+        # Очищаем карты бота и добавляем только победную карту
+        self.game.players["opponent"] = [winning_card]
+        self.game.current_turn = "opponent"
+        self.game.game_type = "bot"
+        
+        # Проверяем, что у бота одна карта
+        self.assertEqual(len(self.game.players["opponent"]), 1)
+        
+        # Бот делает ход
+        success, message = self.game.bot_move()
+        
+        # Проверяем успешность хода
+        self.assertTrue(success)
+        
+        # Проверяем, что у бота не осталось карт
+        self.assertEqual(len(self.game.players["opponent"]), 0)
+        
+        # Проверяем, что игра завершена
+        self.assertEqual(self.game.current_turn, "over")
+        
+        # Проверяем сообщение о победе бота
+        self.assertTrue("выиграл" in message)
+        
+        # Проверяем, что состояние get_state() правильно отражает победителя
+        state = self.game.get_state()
+        self.assertTrue(state["game_over"])
+        self.assertEqual(state["winner"], "opponent")
+    
+    def test_game_status_finished(self):
+        """Проверка изменения статуса игры на 'finished' при победе"""
+        # Создаем тестовую игру и сохраняем ее
+        game = Game()
+        test_game_id = "test_" + shortuuid.uuid()[:6]
+        
+        # Сначала сохраняем игру с обычным состоянием
+        game.save_state(test_game_id, "TestPlayer", "TestOpponent", "multiplayer")
+        
+        # Теперь у игрока нет карт - он выиграл
+        game.players["player"] = []
+        game.current_turn = "over"
+        
+        try:
+            # Сохраняем обновленное состояние в базу данных
+            game.save_state(test_game_id)
+            
+            # Загружаем состояние из базы данных
+            game_state = GameState.query.get(test_game_id)
+            
+            # Проверяем, что статус игры установлен как 'finished'
+            self.assertEqual(game_state.game_status, 'finished')
+        finally:
+            # Удаляем тестовую запись
+            game_state = GameState.query.get(test_game_id)
+            if game_state:
+                db.session.delete(game_state)
+                db.session.commit()
+    
     def test_update_existing_game_state(self):
         """Проверка обновления существующего состояния игры"""
         # Создаем тестовую игру и сохраняем ее

@@ -89,6 +89,13 @@ class Game:
         if card_index == top_index or card_verb == top_verb:
             self.players[player].remove(card)
             self.discard_pile.append(card)
+            
+            # Проверяем, остались ли у игрока карты
+            if len(self.players[player]) == 0:
+                self.current_turn = "over"  # Игра закончена
+                winner = player
+                return True, f"Игрок {player} выиграл, избавившись от всех карточек!"
+            
             self.current_turn = "opponent" if player == "player" else "player"
             self.no_valid_moves_count = 0
             
@@ -111,6 +118,12 @@ class Game:
             if card[2] == top_index or card[1] == top_verb:
                 self.players["opponent"].remove(card)
                 self.discard_pile.append(card)
+                
+                # Проверяем, остались ли у бота карты
+                if len(self.players["opponent"]) == 0:
+                    self.current_turn = "over"  # Игра закончена
+                    return True, "Бот выиграл, избавившись от всех карточек!"
+                
                 self.current_turn = "player"
                 self.no_valid_moves_count = 0
                 print("Бот сделал ход, передаем ход игроку")  # Отладка
@@ -142,7 +155,9 @@ class Game:
             "discard_pile": self.discard_pile[-1],
             "current_turn": self.current_turn,
             "game_type": self.game_type,
-            "is_my_turn": self.current_turn == "player"  # Для игры с ботом игрок всегда "player"
+            "is_my_turn": self.current_turn == "player",  # Для игры с ботом игрок всегда "player"
+            "game_over": self.current_turn == "over",  # Добавляем флаг для обозначения конца игры
+            "winner": "player" if len(self.players["player"]) == 0 else ("opponent" if len(self.players["opponent"]) == 0 else None)
         }
 
     def check_if_playable(self):
@@ -165,14 +180,18 @@ class Game:
             existing_state.current_turn = self.current_turn
             existing_state.no_valid_moves_count = self.no_valid_moves_count
             
+            # Проверяем, закончилась ли игра
+            if len(self.players["player"]) == 0 or len(self.players["opponent"]) == 0:
+                existing_state.game_status = 'finished'
+            
             # Обновляем имена и тип игры только если они предоставлены
             if player_name:
                 existing_state.player_name = player_name
             if opponent_name:
                 existing_state.opponent_name = opponent_name
-                existing_state.game_status = 'active'
+                existing_state.game_status = 'active' if existing_state.game_status != 'finished' else 'finished'
             elif game_type == 'multiplayer' and not existing_state.opponent_name:
-                existing_state.game_status = 'waiting'
+                existing_state.game_status = 'waiting' if existing_state.game_status != 'finished' else 'finished'
             
             if game_type:
                 existing_state.game_type = game_type

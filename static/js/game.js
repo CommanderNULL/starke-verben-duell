@@ -98,7 +98,7 @@ async function joinGame() {
 
 async function updateGameState() {
     if (!currentGameId || !playerName) return;
-    
+
     try {
         const url = `/game/${currentGameId}/state?player_name=${encodeURIComponent(playerName)}&t=${Date.now()}`;
         const response = await fetch(url, {
@@ -138,13 +138,54 @@ async function updateGameState() {
             isMyTurn = state.is_my_turn;
         }
         
+        // Проверяем, закончена ли игра
+        if (state.game_over) {
+            let message = '';
+            if (state.winner === 'player') {
+                message = 'Поздравляем! Вы выиграли, избавившись от всех карточек!';
+            } else if (state.winner === 'opponent') {
+                message = 'Противник выиграл, избавившись от всех карточек!';
+            }
+            
+            notifications.show(message);
+            
+            // Для игры с ботом предлагаем начать новую игру
+            if (state.game_type === 'bot') {
+                // Создаем уведомление с кнопкой "Новая игра"
+                const notification = document.createElement('div');
+                notification.className = 'notification confirmation';
+                notification.innerHTML = `
+                    <p>${message}</p>
+                    <p>Хотите начать новую игру?</p>
+                    <div class="notification-buttons">
+                        <button id="new-game-btn">Новая игра</button>
+                        <button id="cancel-new-game-btn">Отмена</button>
+                    </div>
+                `;
+                document.body.appendChild(notification);
+                
+                // Обработчики событий для кнопок
+                document.getElementById('new-game-btn').onclick = () => {
+                    notification.remove();
+                    document.getElementById('game-setup').style.display = 'block';
+                    document.getElementById('game-table').style.display = 'none';
+                    document.getElementById('player-name').value = playerName; // Сохраняем имя игрока
+                    document.querySelector('input[value="bot"]').checked = true; // Выбираем игру с ботом
+                };
+                
+                document.getElementById('cancel-new-game-btn').onclick = () => {
+                    notification.remove();
+                };
+            }
+        }
+        
         updateUI(state);
         
         // Проверяем, может ли игрок сделать ход
         if (isMyTurn && state.player_cards && Array.isArray(state.player_cards)) {
             const hasValidMove = checkIfHasValidMove(state.player_cards, state.discard_pile);
             // Показываем кнопку взятия карты только если сейчас ход игрока и у него нет валидных ходов
-            document.getElementById('draw-button').style.display = isMyTurn && !hasValidMove ? 'block' : 'none';
+            document.getElementById('draw-button').style.display = isMyTurn && !hasValidMove && !state.game_over ? 'block' : 'none';
         } else {
             document.getElementById('draw-button').style.display = 'none';
         }
@@ -238,7 +279,7 @@ function updateUI(state) {
         state.player_cards.forEach(card => {
             const cardElement = document.createElement('div');
             cardElement.className = 'card';
-            if (!isMyTurn) {
+            if (!isMyTurn || state.game_over) {
                 cardElement.classList.add('disabled');
             }
             cardElement.textContent = card[0];
@@ -256,7 +297,9 @@ function updateUI(state) {
             cardElement.dataset.translation = card[3];
             
             // При клике отправляем карту в точном формате как она получена с сервера
-            cardElement.onclick = () => playCard(card);
+            if (!state.game_over) {
+                cardElement.onclick = () => playCard(card);
+            }
             playerHand.appendChild(cardElement);
         });
     }
@@ -295,7 +338,10 @@ function updateUI(state) {
 
     // Обновляем индикатор хода
     const turnIndicator = document.getElementById('turn');
-    if (gameType === 'bot') {
+    if (state.game_over) {
+        const winner = state.winner === 'player' ? 'Вы выиграли!' : 'Противник выиграл!';
+        turnIndicator.textContent = `Игра окончена. ${winner}`;
+    } else if (gameType === 'bot') {
         // Для игры с ботом просто проверяем, чей ход
         turnIndicator.textContent = `Ход: ${state.current_turn === 'player' ? 'Ваш' : 'Противника'}`;
     } else {
