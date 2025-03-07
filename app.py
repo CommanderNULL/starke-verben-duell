@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 import random
 import json
 import os
@@ -10,7 +9,6 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///game.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
 
 class GameState(db.Model):
     id = db.Column(db.String(10), primary_key=True)
@@ -24,18 +22,6 @@ class GameState(db.Model):
     game_type = db.Column(db.String(10))  # 'bot' или 'multiplayer'
     no_valid_moves_count = db.Column(db.Integer)
     game_status = db.Column(db.String(20))  # 'waiting', 'active', 'finished'
-
-    def to_dict(self):
-        return {
-            "player_cards": self.player_cards,
-            "opponent_cards_count": len(self.opponent_cards),
-            "discard_pile": self.discard_pile[-1],
-            "current_turn": self.current_turn,
-            "player_name": self.player_name,
-            "opponent_name": self.opponent_name,
-            "game_type": self.game_type,
-            "game_status": self.game_status
-        }
 
 def load_verbs():
     with open(os.path.join(app.static_folder, 'data', 'verbs.json'), 'r', encoding='utf-8') as f:
