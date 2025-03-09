@@ -1,0 +1,24 @@
+FROM node:16-alpine
+
+WORKDIR /app
+
+# Устанавливаем зависимости, необходимые для разработки
+RUN apk add --no-cache bash
+
+# Копируем файлы зависимостей
+COPY package.json package-lock.json* ./
+
+# Устанавливаем зависимости
+RUN npm install
+
+# Копируем все остальные файлы
+COPY . .
+
+# Собираем фронтенд
+RUN npm run build
+
+# Экспонируем порт для dev-сервера webpack
+EXPOSE 8080
+
+# Запускаем webpack-dev-server в режиме разработки
+CMD ["npm", "start"] 

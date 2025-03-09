@@ -40,3 +40,17 @@ Thumbs.db
 
 # Database
 game.db
+
+# Node.js
+node_modules/
+/static/js/dist/
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+.npm/
+.pnp/
+.pnp.js
+
+# webpack
+.cache/
+dist/

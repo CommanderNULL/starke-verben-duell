@@ -1,0 +1,115 @@
+/* Анимации для уведомлений */
+.notification-enter {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.notification-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.notification-exit {
+  opacity: 1;
+}
+
+.notification-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Анимации для карт */
+.card-appear {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.card-appear-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.card-enter {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.card-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.card-exit {
+  opacity: 1;
+}
+
+.card-exit-active {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Анимация при игре карты */
+@keyframes cardPlay {
+  0% {
+    transform: translateY(0) rotate(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-150px) rotate(10deg);
+    opacity: 0;
+  }
+}
+
+.card-play {
+  animation: cardPlay 0.5s forwards;
+}
+
+/* Анимация при получении карты */
+@keyframes cardReceive {
+  0% {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.card-receive {
+  animation: cardReceive 0.5s forwards;
+}
+
+/* Стили для React-компонентов */
+.app {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Стили для перехода между экранами */
+.screen-enter {
+  opacity: 0;
+}
+
+.screen-enter-active {
+  opacity: 1;
+  transition: opacity 500ms;
+}
+
+.screen-exit {
+  opacity: 1;
+}
+
+.screen-exit-active {
+  opacity: 0;
+  transition: opacity 500ms;
+} 

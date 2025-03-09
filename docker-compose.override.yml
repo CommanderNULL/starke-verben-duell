@@ -1,0 +1,21 @@
+version: '3.8'
+
+# Этот файл автоматически объединяется с docker-compose.yml
+# и позволяет добавить или переопределить настройки для локальной разработки
+
+services:
+  backend:
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    volumes:
+      - .:/app  # Монтируем локальную директорию для live-reload
+    
+  frontend:
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true  # Для лучшего наблюдения за изменениями в файлах
+    volumes:
+      - .:/app  # Монтируем локальную директорию для hot-reload
+      - /app/node_modules  # Не монтируем node_modules, используем те, что в контейнере
+    command: npm start 

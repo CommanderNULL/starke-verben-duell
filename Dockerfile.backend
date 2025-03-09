@@ -1,0 +1,23 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Устанавливаем curl для healthcheck
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+ENV FLASK_APP=app.py
+ENV FLASK_ENV=production
+ENV FLASK_DEBUG=0
+
+EXPOSE 8085
+
+# Запускаем тесты перед стартом приложения
+RUN pytest test_game.py -v
+
+# Используем gunicorn для production
+CMD ["gunicorn", "--bind", "0.0.0.0:8085", "app:app"] 

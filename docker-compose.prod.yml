@@ -5,23 +5,27 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.backend
-    ports:
-      - "8085:8085"
+    restart: always
+    environment:
+      - FLASK_ENV=production
+      - FLASK_DEBUG=0
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8085/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 10s
+    # Не экспонируем порт напрямую, только через nginx
 
-  frontend:
+  nginx:
     build:
       context: .
-      dockerfile: Dockerfile.frontend
+      dockerfile: Dockerfile.nginx
     ports:
-      - "8080:8080"
+      - "80:80"
     depends_on:
       - backend
+    restart: always
 
 networks:
   default:

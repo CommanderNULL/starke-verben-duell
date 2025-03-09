@@ -4,8 +4,11 @@ import random
 import json
 import os
 import shortuuid
+from flask_cors import CORS
 
 app = Flask(__name__)
+# Добавляем поддержку CORS для работы с React-приложением
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///game.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -513,6 +516,11 @@ def draw_card(game_id):
         return jsonify({"success": True, "message": message, "bot_message": bot_message})
     
     return jsonify({"success": True, "message": message})
+
+@app.route("/health", methods=["GET"])
+def health_check():
+    """Endpoint для проверки работоспособности сервиса"""
+    return jsonify({"status": "healthy"}), 200
 
 with app.app_context():
     db.create_all()

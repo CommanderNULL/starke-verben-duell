@@ -4,73 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Starke Werben Duel</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/react-app.css">
 </head>
 <body>
-    <div id="game-setup" class="game-setup">
-        <h1>Starke Werben Duel</h1>
-        <div class="setup-buttons">
-            <div class="setup-form">
-                <input type="text" id="player-name" placeholder="Ваше имя" maxlength="20">
-                <div class="game-type-selector">
-                    <label>
-                        <input type="radio" name="game-type" value="bot" checked>
-                        Игра с ботом
-                    </label>
-                    <label>
-                        <input type="radio" name="game-type" value="multiplayer">
-                        Игра с человеком
-                    </label>
-                </div>
-                <div class="setup-actions">
-                    <button onclick="createNewGame()">Создать новую игру</button>
-                    <div class="separator">или</div>
-                    <div class="join-section">
-                        <div class="input-hint">Введите ID игры, чтобы присоединиться:</div>
-                        <div class="join-game">
-                            <input type="text" id="game-id" placeholder="Например: 94wqjh6A" maxlength="8">
-                            <button onclick="joinGame()">Присоединиться</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="game-table" class="game-table" style="display: none;">
-        <!-- Область противника -->
-        <div class="player-area opponent-area">
-            <div class="player-info">
-                <span class="player-name" id="opponent-name">Противник</span>
-                <span class="card-count" id="opponent-cards-count">10</span>
-            </div>
-            <div class="opponent-hand"></div>
-        </div>
-
-        <!-- Центральная область -->
-        <div class="play-area">
-            <div class="discard-pile"></div>
-            <div class="turn-indicator" id="turn">Ход: 1</div>
-            <div class="game-id-display">ID игры: <span id="current-game-id"></span></div>
-            <div id="waiting-message" class="waiting-message" style="display: none;">
-                Ожидание подключения второго игрока...
-            </div>
-            <button id="draw-button" class="draw-button" onclick="drawCard()" style="display: none;">
-                Нет хода? Взять карту
-            </button>
-        </div>
-
-        <!-- Область игрока -->
-        <div class="player-area">
-            <div class="player-info">
-                <span class="player-name" id="player-name-display">Игрок</span>
-                <span class="card-count" id="player-cards-count">10</span>
-            </div>
-            <div class="player-hand" id="player-cards"></div>
-        </div>
-    </div>
-
-    <script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+    <div id="root"></div>
+    <script src="/static/js/dist/bundle.js"></script>
 </body>
 </html>

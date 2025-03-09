@@ -2,4 +2,6 @@ flask==3.0.2
 flask-sqlalchemy
 shortuuid
 pytest==8.0.0
-pytest-cov==4.1.0 
+pytest-cov==4.1.0
+gunicorn==21.2.0
+flask-cors==4.0.0 
