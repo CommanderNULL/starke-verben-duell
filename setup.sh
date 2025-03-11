@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Initializing Starke Werben Duel project..."
+echo "Initializing Starke Verben Duell project..."
 
 # Проверка наличия Docker
 if ! command -v docker &> /dev/null; then

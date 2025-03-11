@@ -437,9 +437,8 @@ def play_card(game_id):
     # Для игры с ботом
     success, message = game.play_card("player", tuple(data["card"]))
     if success:
-        bot_success, bot_message = game.bot_move()
         game.save_state(game_id)
-        return jsonify({"success": success, "message": message, "bot_message": bot_message})
+        return jsonify({"success": success, "message": message})
     return jsonify({"success": success, "message": message})
 
 @app.route("/game/<game_id>/draw", methods=["POST"])

@@ -1,5 +1,5 @@
 {
-  "name": "starke-game",
+  "name": "starke-verben-duell",
   "version": "1.0.0",
   "description": "Игра для изучения немецких глаголов",
   "main": "app.py",

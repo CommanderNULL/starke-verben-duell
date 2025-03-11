@@ -15,7 +15,7 @@ const GameSetup = ({ onCreateGame, onJoinGame }) => {
 
   return (
     <div className="game-setup">
-      <h1>Starke Werben Duel</h1>
+      <h1>Starke Verben Duell</h1>
       <div className="setup-buttons">
         <div className="setup-form">
           <input 
