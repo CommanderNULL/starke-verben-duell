@@ -40,6 +40,7 @@ Thumbs.db
 
 # Database
 game.db
+instance/
 
 # Node.js
 node_modules/

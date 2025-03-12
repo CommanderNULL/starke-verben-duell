@@ -136,10 +136,10 @@ class Game:
         print("У бота нет возможности сходить, берет карту")  # Отладка
         self.pull_one_more_card("opponent")
         self.no_valid_moves_count += 1
-        if self.no_valid_moves_count >= 3:
+        if self.no_valid_moves_count >= 2:
             self.replace_top_card()
             self.no_valid_moves_count = 0
-            return True, "После трех ходов без возможности сходить, верхняя карточка заменена"
+            return True, "После двух ходов без возможности сходить, верхняя карточка заменена"
         return True, "У бота нет возможности сходить. Он берет карту и пропускает ход"
 
     def pull_one_more_card(self, player_name):
@@ -148,8 +148,23 @@ class Game:
         self.current_turn = "opponent" if player_name == "player" else "player"
 
     def replace_top_card(self):
+        """Заменяет верхнюю карту в стопке сброса на новую карту из колоды"""
         if len(self.deck) > 0:
-            self.discard_pile.append(self.deck.pop())
+            # Если в стопке сброса больше одной карты
+            if len(self.discard_pile) > 1:
+                # Берем карту, которую собираемся скрыть (предпоследнюю)
+                card_to_return = self.discard_pile.pop(-2)
+                # Возвращаем её в колоду
+                self.deck.append(card_to_return)
+                # Перемешиваем колоду
+                random.shuffle(self.deck)
+            
+            # Заменяем верхнюю карту на новую из колоды
+            new_card = self.deck.pop()
+            self.discard_pile.append(new_card)
+            
+            return new_card
+        return None
 
     def get_state(self):
         return {
@@ -356,6 +371,8 @@ def get_game_state(game_id):
         print(f"Возвращаемое состояние: {state}")
         return jsonify(state)
         
+    # Сохраняем состояние для обычной игры (не с ботом)
+    game.save_state(game_id)
     return jsonify(game.get_state())
 
 @app.route("/game/<game_id>/play", methods=["POST"])
@@ -491,14 +508,15 @@ def draw_card(game_id):
     game.no_valid_moves_count += 1
     game_state.no_valid_moves_count += 1
     
-    # Если было 3 хода без возможности сходить, меняем верхнюю карту
-    if game.no_valid_moves_count >= 3:
-        if len(game.deck) > 0:
-            game.discard_pile.append(game.deck.pop())
-            game_state.discard_pile.append(game.discard_pile[-1])
+    # Если было 2 хода (вместо 3) без возможности сходить, меняем верхнюю карту
+    if game.no_valid_moves_count >= 2:
+        new_card = game.replace_top_card()
+        if new_card:
+            # Обновляем состояние в БД
+            game_state.discard_pile = game.discard_pile
         game.no_valid_moves_count = 0
         game_state.no_valid_moves_count = 0
-        message = "После трех ходов без возможности сходить, верхняя карточка заменена"
+        message = "После двух ходов без возможности сходить, верхняя карточка заменена"
     else:
         # Передаем ход другому игроку
         game.current_turn = "opponent" if current_role == "player" else "player"
@@ -513,6 +531,9 @@ def draw_card(game_id):
         bot_success, bot_message = game.bot_move()
         game.save_state(game_id)
         return jsonify({"success": True, "message": message, "bot_message": bot_message})
+    else:
+        # Сохраняем состояние для обычной игры (не с ботом)
+        game.save_state(game_id)
     
     return jsonify({"success": True, "message": message})
 
