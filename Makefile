@@ -70,13 +70,13 @@ restart-frontend:
 # Запуск тестов
 test:
 	docker compose up -d backend
-	docker compose exec backend pytest test_game.py -v
+	docker compose exec backend pytest -v
 	docker compose down
 
 # Запуск тестов с отчетом о покрытии
 test-cov:
 	docker compose up -d backend
-	docker compose exec backend pytest test_game.py --cov=app --cov-report=term-missing -v
+	docker compose exec backend pytest --cov=app --cov-report=term-missing -v
 	docker compose down
 
 # Сборка для production
